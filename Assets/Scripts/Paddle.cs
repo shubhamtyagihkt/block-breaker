@@ -9,18 +9,34 @@ public class Paddle : MonoBehaviour
     [SerializeField] float minPos = 1f;
     [SerializeField] float maxPos = 15f;
 
+    // caching references
+    GameState gameState;
+    Ball ball;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameState = FindObjectOfType<GameState>();
+        ball = FindObjectOfType<Ball>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        float mousePositionInUnit = Input.mousePosition.x / Screen.width * screenWidthInUnits;
-        Vector2 paddlePosition = new Vector2(mousePositionInUnit, transform.position.y);
-        paddlePosition.x = Mathf.Clamp(paddlePosition.x, minPos, maxPos);
+        Vector2 paddlePosition = new Vector2(transform.position.x, transform.position.y);
+        paddlePosition.x = Mathf.Clamp(GetXPos(), minPos, maxPos);
         transform.position = paddlePosition;
+    }
+
+    private float GetXPos()
+    {
+        if (gameState.IsAutoPlayEnabled())
+        {
+            return ball.transform.position.x;
+        }
+        else
+        {
+            return Input.mousePosition.x / Screen.width * screenWidthInUnits;
+        }
     }
 }
